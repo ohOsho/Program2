@@ -13,6 +13,14 @@ public class Edge implements Comparable<Edge>{
 		this.weight = weight;
 	}
 	
+	//public String getVertices(){
+		//return new int[] {vertex1, vertex2};
+	//}
+	
+	public String getMovie() {
+		return this.movie;
+	}
+	
 	public String getFrom() {
 		return this.vertex1;
 	}
@@ -34,7 +42,7 @@ public class Edge implements Comparable<Edge>{
 	public int compareTo(Edge otherEdge) {
 		
 		if(weight < otherEdge.weight) {
-			return  -1;
+			return -1;
 		}
 		else if(weight > otherEdge.weight) {
 			return 1;

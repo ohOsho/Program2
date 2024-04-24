@@ -3,6 +3,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,11 +14,13 @@ public class UndirectedGraph {
 	private HashMap<String, LinkedList<String>> connection;
 	//This will map the actors name with the actors they have worked with
 	private HashMap<String, LinkedList<Edge>> adjList;
+	private HashSet<Edge> edges;
 	
 	public UndirectedGraph() {
 		
 		adjList = new HashMap<String, LinkedList<Edge>>();
 		connection = new HashMap<String, LinkedList<String>>();
+		edges = new HashSet<Edge>();
 	}
 	
 	//This loads in our input txt file to then store into value
@@ -73,39 +76,50 @@ public class UndirectedGraph {
 					//Handles all cases that the program will run into
 					if(!adjList.containsKey(act[j])) { //does not exist and is connecting a previous array spot to one further down that array
 						Edge edge = new Edge(act[j], act[k], movie, 1.0);
-						LinkedList<Edge> edges = new LinkedList<Edge>();
-						edges.add(edge);
-						adjList.put(act[j], edges);
+						if(edges.add(edge)) {
+							LinkedList<Edge> edges = new LinkedList<Edge>();
+							edges.add(edge);
+							adjList.put(act[j], edges);
+						}
+					}
+					else if(adjList.containsKey(act[j])){
+						Edge edge = new Edge(act[j], act[k], movie, 1.0);
+						if(edges.add(edge)) {
+							adjList.get(act[j]).add(edge);
+						}
 					}
 					if(!adjList.containsKey(act[k])) { //does not exist and is connecting a array spot further down to one prior to it
 						Edge edge = new Edge(act[k], act[j], movie, 1.0);
-						LinkedList<Edge> edges = new LinkedList<Edge>();
-						edges.add(edge);
-						adjList.put(act[k], edges);
+						if(edges.add(edge)) {
+							LinkedList<Edge> edges = new LinkedList<Edge>();
+							edges.add(edge);
+							adjList.put(act[k], edges);
+						}
 					}
-					if(adjList.containsKey(act[j])){
-						Edge edge = new Edge(act[j], act[k], movie, 1.0);
-						adjList.get(act[j]).add(edge);
-					}
-					if(adjList.containsKey(act[k])) {
+					else if(adjList.containsKey(act[k])) {
 						Edge edge = new Edge(act[k], act[j], movie, 1.0);
-						adjList.get(act[k]).add(edge);
+						if(edges.add(edge)) {
+							adjList.get(act[k]).add(edge);
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	//helps check if our adjList is printing correctly
-	public void printAdjList() {
-		
-		for (Map.Entry<String, LinkedList<Edge>> entry : adjList.entrySet()) {
-            String act = entry.getKey();
-            LinkedList<Edge> actors = entry.getValue();
+	public HashSet<Edge> getEdges(){
+		return edges;
+	}
+	
+	public HashMap<String, LinkedList<Edge>> getAdjList() {
+		return adjList;
+	}
 
-            System.out.print(act + ": " + actors);
-        
-            System.out.println();
-        }
+	public int getNumVertices() {
+		return adjList.size();
+	}
+
+	public LinkedList<Edge> getAdjacencyEdges(String vertex) {
+		return adjList.get(vertex);
 	}
 }
